@@ -1,0 +1,12 @@
+# Ignore package.json files
+# common/package.json
+
+# Ignore node_modules directories
+common/node_modules
+
+# Ignore build directories
+backend/dist
+
+# Ignore IDE-specific files and directories
+.vscode
+.idea

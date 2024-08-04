@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
-import { decode, sign, verify } from 'hono/jwt';
+import {  verify } from 'hono/jwt';
+import { createBlogInput, updateBlogInput } from "@nitinkumarpal/medium-common";
 
 export const blogRouter = new Hono<{
     Bindings: {
@@ -47,6 +48,15 @@ blogRouter.post('/', async (c) => {
 
     try {
         const { title, content } = await c.req.json();
+        if (!title || !content) {
+            c.status(400);
+            return c.json({ error: 'Invalid Inputs', message: 'Title and Content is required' });
+        }
+        const { success } = createBlogInput.safeParse({ title, content });
+        if (!success) {
+            c.status(403);
+                return c.json({ Error: Error, message: 'Invalid Inputs',typeof: `title = ${typeof title}, content = ${typeof content}` });
+        }
         const authorId = c.get("userId");
         const blog = await prisma.blog.create({
             data: {
@@ -68,6 +78,11 @@ blogRouter.put('/', async (c) => {
     }).$extends(withAccelerate());
 
     const { id, title, content } = await c.req.json();
+    const { success } = updateBlogInput.safeParse({ id, title, content });
+    if (!success) {
+        c.status(403);
+        return c.json({ Error: Error, message: 'Invalid Inputs' });
+    }
     const blog = await prisma.blog.update({
         where: {
             id: id
