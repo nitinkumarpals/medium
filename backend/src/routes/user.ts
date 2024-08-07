@@ -18,7 +18,6 @@ userRouter.post('/signup', async (c) => {
 
 
     try {
-        //zod, 
         const { name, username, password } = await c.req.json();
         const { success } = signupInput.safeParse({ name, username, password });
         if (!success) {
@@ -34,7 +33,7 @@ userRouter.post('/signup', async (c) => {
             }
         });
         const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-        return c.json({ password: user.password, jwt });
+        return c.json( jwt );
     } catch (error: any) {
         c.status(403);
         return c.json({ error: error.message, message: 'User already exists with this username' });
@@ -57,12 +56,17 @@ userRouter.post('/login', async (c) => {
         const user = await prisma.user.findFirst({
             where: {
                 username: username,
-                password: password
             }
         });
         if (!user) {
             c.status(403);
             return c.json({ Error: Error, message: 'Invalid credentials' });
+        }
+        
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            c.status(403);
+            return c.json({ Error: 'Error', message: 'Invalid credentials' });
         }
         const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
         return c.text(jwt);
