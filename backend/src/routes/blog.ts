@@ -65,7 +65,7 @@ blogRouter.post('/', async (c) => {
                 authorId: Number(authorId)
             }
         })
-        return c.json(blog.id);
+        return c.json({ id: blog.id});
     } catch (error: any) {
         c.status(500);
         return c.json({ error: error.message, message: 'error while creating blog post' });
@@ -95,13 +95,44 @@ blogRouter.put('/', async (c) => {
     return c.json(blog.id);
 });
 
+blogRouter.delete('/', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL
+    }).$extends(withAccelerate());
+
+    const {id} = await c.req.json();
+    try {
+        const blog = await prisma.blog.delete({
+            where: {
+                id: Number(id)
+            }
+        })
+        return c.json(blog.id);
+    } catch (error: any) {
+        c.status(500);
+        return c.json({ error: error.message, message: 'error while deleting blog post' });
+    }
+    
+});
+
 blogRouter.get('/bulk', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL
     }).$extends(withAccelerate());
 
-    const blogs = await prisma.blog.findMany();
-    return c.json(blogs);
+    const blogs = await prisma.blog.findMany({
+        select: {
+            id: true,
+            title: true,
+            content: true,
+            author: {
+                select: {
+                    name: true
+                }
+            }
+        }
+    });
+    return c.json({blogs});
 });
 
 blogRouter.get('/:id', async (c) => {
