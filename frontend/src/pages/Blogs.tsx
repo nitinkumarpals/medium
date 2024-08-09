@@ -33,9 +33,9 @@ export const Blogs = () => {
                 <div className="max-w-xl">
                     {blogs.map(blog =>
                         <BlogCard
+                            id={blog.id}
                             key={blog.id}
-                            authorName={blog.author.name || ""}
-                            publishedAt="11/11/2021"
+                            authorName={blog.author.name.charAt(0).toUpperCase() + blog.author.name.slice(1) || ""}                            publishedAt="11/11/2021"
                             title={blog.title}
                             content={blog.content}
                         />)}
