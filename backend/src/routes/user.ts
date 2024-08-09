@@ -3,7 +3,7 @@ import { withAccelerate } from '@prisma/extension-accelerate';
 import { Hono } from 'hono';
 import { sign } from 'hono/jwt';
 import bcrypt from 'bcryptjs';
-import { signupInput,loginInput } from '@nitinkumarpal/medium-common';
+import { signupInput, loginInput } from '@nitinkumarpal/medium-common';
 export const userRouter = new Hono<{
     Bindings: {
         DATABASE_URL: string;
@@ -32,8 +32,8 @@ userRouter.post('/signup', async (c) => {
                 password: hashedPassword
             }
         });
-        const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-        return c.json( jwt );
+        const jwt = await sign({ id: user.id, name: user.name }, c.env.JWT_SECRET);
+        return c.json(jwt);
     } catch (error: any) {
         c.status(403);
         return c.json({ error: error.message, message: 'User already exists with this username' });
@@ -62,13 +62,13 @@ userRouter.post('/login', async (c) => {
             c.status(403);
             return c.json({ Error: Error, message: 'Invalid credentials' });
         }
-        
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             c.status(403);
             return c.json({ Error: 'Error', message: 'Invalid credentials' });
         }
-        const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
+        const jwt = await sign({ id: user.id, name: user.name }, c.env.JWT_SECRET);
         return c.text(jwt);
     } catch (error: any) {
         console.log(error);
