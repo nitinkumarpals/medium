@@ -10,7 +10,6 @@ export const SkeletonBlog = () => {
                             <div className="bg-gray-300 h-10 w-6 h-6 rounded-full mr-4 animate-pulse"></div>
                             <div className="h-2 bg-gray-200 rounded-full  w-14 h-4 "></div>
                             <div className="ml-4 h-2 bg-gray-200 rounded-full  w-14 h-4 "></div>
-
                         </div>
 
                         <div className="flex flex-col">
@@ -20,7 +19,6 @@ export const SkeletonBlog = () => {
                     <div className="h-2 bg-gray-200 rounded-full  mb-2.5 animate-pulse"></div>
                     <div className="h-2 bg-gray-200 rounded-full  mb-2.5 animate-pulse"></div>
                     <div className="h-2 bg-gray-200 rounded-full  mb-2.5 animate-pulse"></div>
-
                     <div className="h-2.5 bg-gray-200 rounded-full  w-48 mb-4"></div>
                 </div>
 

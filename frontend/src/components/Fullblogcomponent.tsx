@@ -42,3 +42,4 @@ export const Fullblogcomponent = ({ blog }: { blog: Blog }) => {
         </div>
     )
 }
+
